@@ -5,6 +5,7 @@ own additional test cases to cover any failed tests shown in the Project Assista
 """
 import unittest
 import solution
+from utils import *
 
 
 class TestNakedTwins(unittest.TestCase):
