@@ -178,6 +178,8 @@ def search(values):
     """
     # First, reduce the puzzle using the previous function
     values = reduce_puzzle(values)
+    if not values:
+        return False
     values = naked_twins(values)
     if not values:
         return False
