@@ -1,0 +1,17 @@
+
+Solving Air Cargo Problem 2 using astar_search with h_pg_setlevel...
+
+# Actions   Expansions   Goal Tests   New Nodes
+    72         1987        1989       18324   
+
+Plan length: 9  Time elapsed in seconds: 774.9027792910019
+Load(C1, P1, SFO)
+Fly(P1, SFO, JFK)
+Load(C2, P1, JFK)
+Unload(C1, P1, JFK)
+Fly(P1, JFK, SFO)
+Load(C3, P3, ATL)
+Fly(P3, ATL, SFO)
+Unload(C3, P3, SFO)
+Unload(C2, P1, SFO)
+
