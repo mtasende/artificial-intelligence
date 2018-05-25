@@ -1,7 +1,8 @@
 
-from itertools import chain, combinations
+from itertools import chain, combinations, product
 from aimacode.planning import Action
 from aimacode.utils import expr
+import math
 
 from layers import BaseActionLayer, BaseLiteralLayer, makeNoOp, make_node
 
@@ -15,30 +16,44 @@ class ActionLayer(BaseActionLayer):
         --------
         layers.ActionNode
         """
-        # TODO: implement this function
-        raise NotImplementedError
-
+        inconsistent = False
+        for e1, e2 in product(actionA.effects, actionB.effects):
+            inconsistent = e1.__eq__(e2.__invert__())
+            if inconsistent:
+                break
+        return inconsistent
 
     def _interference(self, actionA, actionB):
-        """ Return True if the effects of either action negate the preconditions of the other 
-        
+        """ Return True if the effects of either action negate the preconditions of the other
+
         See Also
         --------
         layers.ActionNode
         """
-        # TODO: implement this function
-        raise NotImplementedError
+        inconsistent = False
+        for p1, e2 in product(actionA.preconditions, actionB.effects):
+            inconsistent = p1.__eq__(e2.__invert__())
+            if inconsistent:
+                return True
+        for e1, p2 in product(actionA.effects, actionB.preconditions):
+            inconsistent = e1.__eq__(p2.__invert__())
+            if inconsistent:
+                return True
+        return inconsistent
 
     def _competing_needs(self, actionA, actionB):
         """ Return True if any preconditions of the two actions are pairwise mutex in the parent layer
-        
+
         See Also
         --------
         layers.ActionNode
         layers.BaseLayer.parent_layer
         """
-        # TODO: implement this function
-        raise NotImplementedError
+        compete = False
+        for pre_a, pre_b in product(actionA.preconditions, actionB.preconditions):
+            if self.parent_layer.is_mutex(pre_a, pre_b):
+                return True
+        return compete
 
 
 class LiteralLayer(BaseLiteralLayer):
@@ -50,13 +65,17 @@ class LiteralLayer(BaseLiteralLayer):
         --------
         layers.BaseLayer.parent_layer
         """
-        # TODO: implement this function
-        raise NotImplementedError
+        actionsA = [item for item in self.parent_layer if literalA in item.effects]
+        actionsB = [item for item in self.parent_layer if literalB in item.effects]
+        # Try to find a consistent pair. If it is not possible, return True.
+        for actionA, actionB in product(actionsA, actionsB):
+            if not self.parent_layer.is_mutex(actionA, actionB):
+                return False
+        return True
 
     def _negation(self, literalA, literalB):
         """ Return True if two literals are negations of each other """
-        # TODO: implement this function
-        raise NotImplementedError
+        return literalA.__eq__(literalB.__invert__())
 
 
 class PlanningGraph:
@@ -94,6 +113,23 @@ class PlanningGraph:
         self.literal_layers = [layer]
         self.action_layers = []
 
+    def level_costs(self, literals):
+        """ Find the level costs for a list of literals. """
+        not_present_yet = self.goal
+        costs = list()
+        while len(not_present_yet) > 0:
+            if self._is_leveled:
+                for _ in not_present_yet:
+                    costs.append(math.inf)
+            found = set()
+            for literal in not_present_yet:
+                if literal in self.literal_layers[-1]:
+                    costs.append(len(self.literal_layers) - 1)
+                    found.add(literal)
+            not_present_yet = not_present_yet.difference(found)
+            self._extend()
+        return costs
+
     def h_levelsum(self):
         """ Calculate the level sum heuristic for the planning graph
 
@@ -114,8 +150,8 @@ class PlanningGraph:
         --------
         Russell-Norvig 10.3.1 (3rd Edition)
         """
-        # TODO: implement this function
-        raise NotImplementedError
+        goal_costs = self.level_costs(self.goal)
+        return sum(goal_costs)
 
     def h_maxlevel(self):
         """ Calculate the max level heuristic for the planning graph
@@ -139,8 +175,8 @@ class PlanningGraph:
         -----
         WARNING: you should expect long runtimes using this heuristic with A*
         """
-        # TODO: implement maxlevel heuristic
-        raise NotImplementedError
+        goal_costs = self.level_costs(self.goal)
+        return max(goal_costs)
 
     def h_setlevel(self):
         """ Calculate the set level heuristic for the planning graph
@@ -159,8 +195,31 @@ class PlanningGraph:
         -----
         WARNING: you should expect long runtimes using this heuristic on complex problems
         """
-        # TODO: implement setlevel heuristic
-        raise NotImplementedError
+        # First find all the literals in the goal
+        not_present_yet = self.goal
+        while len(not_present_yet) > 0:
+            if self._is_leveled:
+                return math.inf
+            found = set()
+            for literal in not_present_yet:
+                if literal in self.literal_layers[-1]:
+                    found.add(literal)
+            not_present_yet = not_present_yet.difference(found)
+            self._extend()
+
+        # Now check for no mutexes
+        literal_pairs = combinations(self.goal, 2)
+        while True:
+            if self._is_leveled:
+                return math.inf
+            mutex = False
+            for l1, l2 in literal_pairs:
+                if self.literal_layers[-1]._negation(l1, l2) or self.literal_layers[-1]._inconsistent_support(l1, l2):
+                    mutex = True
+                    break
+            if not mutex:  # Don't waste time extending...
+                return len(self.literal_layers) - 1
+            self._extend()
 
     ##############################################################################
     #                     DO NOT MODIFY CODE BELOW THIS LINE                     #
