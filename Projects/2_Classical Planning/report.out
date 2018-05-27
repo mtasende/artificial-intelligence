@@ -1,0 +1,8 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Problems 1 and 2}{}% 2
+\BOOKMARK [1][-]{section.3}{Problems 3 and 4}{}% 3
+\BOOKMARK [1][-]{section.4}{Aggregated Results}{}% 4
+\BOOKMARK [1][-]{section.5}{Results Analysis}{}% 5
+\BOOKMARK [2][-]{subsection.5.1}{Which algorithm or algorithms would be most appropriate for planning in a very restricted domain \(i.e., one that has only a few actions\) and needs to operate in real time?}{section.5}% 6
+\BOOKMARK [2][-]{subsection.5.2}{Which algorithm or algorithms would be most appropriate for planning in very large domains \(e.g., planning delivery routes for all UPS drivers in the U.S. on a given day\)}{section.5}% 7
+\BOOKMARK [2][-]{subsection.5.3}{Which algorithm or algorithms would be most appropriate for planning problems where it is important to find only optimal plans? }{section.5}% 8
