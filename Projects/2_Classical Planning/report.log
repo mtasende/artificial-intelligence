@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.23)  26 MAY 2018 10:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.23)  28 MAY 2018 18:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -301,6 +301,48 @@ LaTeX Warning: Label `fig_raw_data' multiply defined.
 
 LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
 
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data' multiply defined.
+
+
+LaTeX Warning: Label `fig_raw_data@cref' multiply defined.
+
 )
 \openout1 = `report.aux'.
 
@@ -408,12 +450,19 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 26.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<results/results12.png, id=36, 1779.64874pt x 662.475pt>
+<results/results12.png, id=48, 1779.64874pt x 662.475pt>
 File: results/results12.png Graphic file (type png)
 
 <use results/results12.png>
 Package pdftex.def Info: results/results12.png used on input line 35.
 (pdftex.def)             Requested size: 433.62pt x 161.4132pt.
+
+<results/results34.png, id=50, 1350.04375pt x 448.67625pt>
+File: results/results34.png Graphic file (type png)
+
+<use results/results34.png>
+Package pdftex.def Info: results/results34.png used on input line 48.
+(pdftex.def)             Requested size: 433.62pt x 144.10649pt.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}pdfTeX warning (ext4): desti
@@ -422,49 +471,158 @@ te ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.50 \section
-             {Results Analysis} <./results/results12.png>]
-File: results/results12.png Graphic file (type png)
-
-<use results/results12.png>
-Package pdftex.def Info: results/results12.png used on input line 63.
-(pdftex.def)             Requested size: 361.34999pt x 134.50424pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 68.
- [2pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
- has been already used, duplicate ignored
+l.51 \end{figure}
+                  <./results/results12.png>] [2pdfTeX warning (ext4): destinati
+on with the same identifier (name{figure.2}) has been already used, duplicate i
+gnored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.68 \end{document}
-                   ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 68.
+l.53 \newpage
+              <./results/results34.png>]
+<results/table_expansions_actions.png, id=68, 1204.5pt x 559.08875pt>
+File: results/table_expansions_actions.png Graphic file (type png)
+
+<use results/table_expansions_actions.png>
+Package pdftex.def Info: results/table_expansions_actions.png used on input lin
+e 60.
+(pdftex.def)             Requested size: 289.07999pt x 134.18404pt.
+
+<results/expansions_actions.png, id=69, 1177.39874pt x 606.265pt>
+File: results/expansions_actions.png Graphic file (type png)
+
+<use results/expansions_actions.png>
+Package pdftex.def Info: results/expansions_actions.png used on input line 67.
+(pdftex.def)             Requested size: 469.75499pt x 241.8819pt.
+
+Overfull \hbox (16.7871pt too wide) in paragraph at lines 67--68
+ [][] 
+ []
+
+[3pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.74 \newpage
+             pdfTeX warning (ext4): destination with the same identifier (name{
+figure.4}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.74 \newpage
+              <./results/table_expansions_actions.png> <./results/expansions_ac
+tions.png>] <results/table_time_actions.png, id=79, 1216.545pt x 482.80376pt>
+File: results/table_time_actions.png Graphic file (type png)
+
+<use results/table_time_actions.png>
+Package pdftex.def Info: results/table_time_actions.png used on input line 78.
+(pdftex.def)             Requested size: 289.07999pt x 114.72601pt.
+
+<results/time_actions.png, id=80, 1183.42125pt x 606.265pt>
+File: results/time_actions.png Graphic file (type png)
+
+<use results/time_actions.png>
+Package pdftex.def Info: results/time_actions.png used on input line 85.
+(pdftex.def)             Requested size: 469.75499pt x 240.65154pt.
+
+Overfull \hbox (16.7871pt too wide) in paragraph at lines 85--86
+ [][] 
+ []
+
+[4pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.92 \newpage
+             pdfTeX warning (ext4): destination with the same identifier (name{
+figure.6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.92 \newpage
+              <./results/table_time_actions.png> <./results/time_actions.png>]
+<results/table_length_problem.png, id=89, 1056.94875pt x 547.04375pt>
+File: results/table_length_problem.png Graphic file (type png)
+
+<use results/table_length_problem.png>
+Package pdftex.def Info: results/table_length_problem.png used on input line 96
+.
+(pdftex.def)             Requested size: 289.07999pt x 149.6153pt.
+
+<results/length_problem.png, id=90, 1171.37625pt x 606.265pt>
+File: results/length_problem.png Graphic file (type png)
+
+<use results/length_problem.png>
+Package pdftex.def Info: results/length_problem.png used on input line 103.
+(pdftex.def)             Requested size: 469.75499pt x 243.13075pt.
+
+Overfull \hbox (16.7871pt too wide) in paragraph at lines 103--104
+ [][] 
+ []
+
+<results/references.png, id=91, 859.21pt x 467.7475pt>
+File: results/references.png Graphic file (type png)
+
+<use results/references.png>
+Package pdftex.def Info: results/references.png used on input line 111.
+(pdftex.def)             Requested size: 216.81pt x 118.02858pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[5pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.117 \newpage
+              pdfTeX warning (ext4): destination with the same identifier (name
+{figure.8}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.117 \newpage
+               <./results/table_length_problem.png> <./results/length_problem.p
+ng>] [6pdfTeX warning (ext4): destination with the same identifier (name{figure
+.9}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.129 
+       <./results/references.png>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 131.
+ [7]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 131.
  (./report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 68.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 68.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 131.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 131.
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 8BF6E34698119FA641CC444C8F522FE0;873.
+(rerunfilecheck)             Checksum: D0CFE56F59B9414A7F9C67EDF1B60FC9;1108.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 68.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 131.
  ) 
 Here is how much of TeX's memory you used:
- 8019 strings out of 493029
- 126663 string characters out of 6136234
- 235647 words of memory out of 5000000
- 11466 multiletter control sequences out of 15000+600000
+ 8077 strings out of 493029
+ 128032 string characters out of 6136234
+ 236647 words of memory out of 5000000
+ 11501 multiletter control sequences out of 15000+600000
  12403 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,6n,29p,314b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,6n,29p,849b,351s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on report.pdf (2 pages, 182694 bytes).
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on report.pdf (7 pages, 928967 bytes).
 PDF statistics:
- 74 PDF objects out of 1000 (max. 8388607)
- 63 compressed objects within 1 object stream
- 13 named destinations out of 1000 (max. 500000)
- 70 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 138 PDF objects out of 1000 (max. 8388607)
+ 104 compressed objects within 2 object streams
+ 28 named destinations out of 1000 (max. 500000)
+ 134 words of extra memory for PDF output out of 10000 (max. 10000000)
 
