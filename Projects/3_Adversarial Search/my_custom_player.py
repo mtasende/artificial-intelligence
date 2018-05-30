@@ -1,6 +1,7 @@
 
 from sample_players import DataPlayer
 import random
+from copy import deepcopy
 
 
 class CustomPlayer(DataPlayer):
@@ -48,6 +49,7 @@ class CustomPlayer(DataPlayer):
                 best_score = v
                 best_move = a
             alpha = max(v, alpha)
+        print('Turn {}) With depth {}, I will play: {}'.format(state.ply_count, depth, best_move))
         return best_move
 
     def min_value(self, state, alpha, beta, depth):
@@ -105,8 +107,9 @@ class CustomPlayer(DataPlayer):
           Refer to (and use!) the Isolation.play() function to run games.
         **********************************************************************
         """
+        print('get_action was called with {} possible actions.'.format(len(state.actions())))
         self.queue.put(random.choice(state.actions()))
-        
+
         # if self.context is None:
         #    self.context = dict()
         # print('Previous turns max depths: {}'.format(self.context))
@@ -114,6 +117,7 @@ class CustomPlayer(DataPlayer):
         # Iterative deepening
         depth = 1
         while True:
+            # I could deepcopy the state (safer) but it would take more time to run
             self.queue.put(self.alpha_beta_search(state, depth))
             # self.context[state.ply_count] = depth  # Save the last depth for each turn
             depth += 1
