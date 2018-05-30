@@ -39,17 +39,20 @@ class CustomPlayer(DataPlayer):
 
         Assumprtions:  depth > 0,  the state is not terminal.
         """
-        alpha = float("-inf")
-        beta = float("inf")
-        best_score = float("-inf")
+        alpha = -float('inf')
+        beta = float('inf')
+        best_score = -float('inf')
+        first_move = True
         best_move = None
         for a in state.actions():
             v = self.min_value(state.result(a), alpha, beta, depth - 1)
+            if first_move:
+                first_move = False
+                best_move = a
             if v > best_score:
                 best_score = v
                 best_move = a
             alpha = max(v, alpha)
-        print('Turn {}) With depth {}, I will play: {}'.format(state.ply_count, depth, best_move))
         return best_move
 
     def min_value(self, state, alpha, beta, depth):
@@ -57,13 +60,7 @@ class CustomPlayer(DataPlayer):
         otherwise return the minimum value over all legal child
         nodes.
         """
-        if state.terminal_test():
-            return state.utility(self.player_id)
-
-        if depth <= 0:
-            return self.my_moves(state) - self.opponent_moves(state)
-
-        v = float("inf")
+        v = float('inf')
         for a in state.actions():
             v = min(v, self.max_value(state.result(a), alpha, beta, depth - 1))
             if v <= alpha:
@@ -82,7 +79,7 @@ class CustomPlayer(DataPlayer):
         if depth <= 0:
             return self.my_moves(state) - self.opponent_moves(state)
 
-        v = float("-inf")
+        v = -float('inf')
         for a in state.actions():
             v = max(v, self.min_value(state.result(a), alpha, beta, depth - 1))
             if v >= beta:
@@ -107,17 +104,13 @@ class CustomPlayer(DataPlayer):
           Refer to (and use!) the Isolation.play() function to run games.
         **********************************************************************
         """
-        print('get_action was called with {} possible actions.'.format(len(state.actions())))
         self.queue.put(random.choice(state.actions()))
 
         # if self.context is None:
         #    self.context = dict()
-        # print('Previous turns max depths: {}'.format(self.context))
 
         # Iterative deepening
         depth = 1
         while True:
-            # I could deepcopy the state (safer) but it would take more time to run
             self.queue.put(self.alpha_beta_search(state, depth))
-            # self.context[state.ply_count] = depth  # Save the last depth for each turn
             depth += 1
