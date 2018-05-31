@@ -1,7 +1,6 @@
 
 from sample_players import DataPlayer
 import random
-from copy import deepcopy
 
 
 class CustomPlayer(DataPlayer):
