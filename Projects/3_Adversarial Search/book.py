@@ -174,6 +174,8 @@ def sym_sa(s_a, loc_sym, cardinal_sym):
     """
     Symmetry for a (state, action) pair.
     Don't use if this state is from move 3 or more.
+    loc_sym is a function that transforms a location.
+    cardinal_sym is a dictionary that maps cardinal points in the symmetry.
     """
     state = s_a[0]
     action = s_a[1]
