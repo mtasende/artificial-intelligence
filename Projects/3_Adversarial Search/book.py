@@ -38,6 +38,17 @@ actions_dict = {
 }
 
 
+def get_full_states(state, depth, s_set=None):
+    if s_set is None:
+        s_set = set()
+    else:
+        s_set.add(state)
+    for action in state.actions():
+        if depth > 0:
+            s_set |= get_full_states(state.result(action), depth - 1, s_set)
+    return s_set
+
+
 def get_full_tree(state, depth, s_a_set=None):
     if s_a_set is None:
         s_a_set = set()
