@@ -74,7 +74,7 @@ class Isolation(NamedTuple('Isolation', [('board', int), ('ply_count', int), ('l
         loc = self.locs[self.player()]
         if loc is None:
             return self.liberties(loc)
-        return [a for a in Action if (a + loc) > 0 and (self.board & (1 << (a + loc)))]
+        return [a for a in Action if (a + loc) >= 0 and (self.board & (1 << (a + loc)))]
 
     def player(self):
         """ Return the id (zero for first player, one for second player) of player
@@ -185,10 +185,10 @@ class DebugState(Isolation):
     Examples
     --------
     >>> board = Isolation()
-    >>> debug_board = DebugBoard(board)
-    >>> print(db.bitboard_string)
+    >>> debug_board = DebugBoard.from_state(board)
+    >>> print(debug_board.bitboard_string)
     11111111111001111111111100111111111110011111111111001111111111100111111111110011111111111
-    >>> print(db)
+    >>> print(debug_board)
 
     + - + - + - + - + - + - + - + - + - + - + - +
     |   |   |   |   |   |   |   |   |   |   |   |
