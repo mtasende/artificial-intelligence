@@ -6,6 +6,7 @@ import re
 import os
 from functools import reduce
 import isolation.isolation as iso
+import subprocess
 
 W, H = 11, 9
 
@@ -73,11 +74,28 @@ def process_game_history(state,
     """ Given an initial state, and a list of actions, this function iterates
     through the resulting states of the actions and updates count of wins in
     the state/action book"""
+    opening_moves = 2
     game_value = 2 * (active_player == winner_id) - 1
     curr_state = state  # It is a named tuple, so I think it is immutable. No need to copy.
     for num_action, action in enumerate(game_history):
         if (curr_state, action) in book.keys():
             book[(curr_state, action)] += game_value
+            if curr_state.ply_count <= opening_moves:
+                sym_pair = sym_sa((curr_state, action),
+                                  loc_sym=h_symmetry,
+                                  cardinal_sym=cardinal_sym_h)
+                if sym_pair[1] in sym_pair[0].actions():
+                    book[sym_pair] += game_value
+                sym_pair = sym_sa((curr_state, action),
+                                  loc_sym=v_symmetry,
+                                  cardinal_sym=cardinal_sym_v)
+                if sym_pair[1] in sym_pair[0].actions():
+                    book[sym_pair] += game_value
+                sym_pair = sym_sa((curr_state, action),
+                                  loc_sym=c_symmetry,
+                                  cardinal_sym=cardinal_sym_c)
+                if sym_pair[1] in sym_pair[0].actions():
+                    book[sym_pair] += game_value
         curr_state = curr_state.result(action)
         active_player = 1 - active_player
         game_value = 2 * (active_player == winner_id) - 1
@@ -88,26 +106,48 @@ def process_game_history(state,
 
 def save_book(book):
     timestamp = dt.datetime.now()
-    filename = 'book' + timestamp.__str__().replace(' ', '_').replace(':','$') + '.pkl'
+    filename = 'book' + timestamp.__str__().replace(' ', '_').replace(':','S') + '.pkl'
+    print('Saving: {}'.format(filename))
     with open(filename, 'wb') as file:
         pickle.dump(book, file, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load_latest_book(depth=4):
+def get_book_list():
     pattern = 'book(.*)\.pkl'
     book_list = [
         (re.match(pattern, filename).group(0),
          dt.datetime.strptime(re.match(pattern, filename).group(1),
-                              '%Y-%m-%d_%H$%M$%S.%f'))
+                              '%Y-%m-%d_%HS%MS%S.%f'))
         for filename in os.listdir('.')
         if re.match(pattern, filename) is not None
     ]
+    return book_list
+
+
+def get_latest_book_name(book_list):
     if len(book_list) == 0:
+        return None
+    return max(book_list, key=lambda x: x[1])[0]
+
+
+def load_latest_book(depth=4):
+    filename = get_latest_book_name(get_book_list())
+    if filename is None:
         return get_empty_book(Isolation(), depth)
-    latest_name = max(book_list, key=lambda x: x[1])[0]
-    with open(latest_name, 'rb') as file:
+    with open(filename, 'rb') as file:
         latest_book = pickle.load(file)
     return latest_book
+
+
+def remove_old_books():
+    book_list = get_book_list()
+    titles = [book for book, date in book_list]
+    latest_name = get_latest_book_name(book_list)
+    titles.remove(latest_name)
+    for title in titles:
+        command = 'rm {}'.format(title)
+        print(command)
+        subprocess.call(command, shell=True)
 
 
 def show_board(board, W, H):
@@ -123,24 +163,22 @@ def h_symmetry(loc):
     if loc is None:
         return None
     row = loc // (W + 2)
-    col = loc % (W + 2)
-    center = W // 2 + 1
-    return row * (W + 2) + 2 * center - col
+    center = W + (row - 1) * (W + 2) + (W + 2) // 2 + 1 if row != 0 else W // 2
+    return 2 * center - loc
 
 
 def v_symmetry(loc):
     if loc is None:
         return None
-    row = loc // (W + 2)
     col = loc % (W + 2)
-    center = H // 2
-    return (2 * center - row) * (W + 2) + col
+    center = (H // 2) * (W + 2) + col
+    return 2 * center - loc
 
 
 def c_symmetry(loc):
     if loc is None:
         return None
-    center = (H // 2) * (W + 2) + W // 2 + 1
+    center = (H // 2) * (W + 2) + W // 2
     return 2 * center - loc
 
 
@@ -200,5 +238,8 @@ def sym_sa(s_a, loc_sym, cardinal_sym):
     new_state = Isolation(board=new_board,
                           ply_count=state.ply_count,
                           locs=new_locs)
-    new_action = action_symmetric(action, cardinal_sym)
+    if isinstance(action, iso.Action):
+        new_action = action_symmetric(action, cardinal_sym)
+    else:
+        new_action = loc_sym(action)
     return new_state, new_action
