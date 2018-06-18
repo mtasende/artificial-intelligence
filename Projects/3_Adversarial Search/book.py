@@ -62,7 +62,7 @@ def get_full_tree(state, depth, s_a_set=None):
 
 def get_empty_book(state, depth):
     tree = get_full_tree(state, depth)
-    return {key: 0 for key in tree}
+    return {key: [0, 0] for key in tree}
 
 
 def process_game_history(state,
@@ -79,23 +79,27 @@ def process_game_history(state,
     curr_state = state  # It is a named tuple, so I think it is immutable. No need to copy.
     for num_action, action in enumerate(game_history):
         if (curr_state, action) in book.keys():
-            book[(curr_state, action)] += game_value
+            book[(curr_state, action)][0] += game_value
+            book[(curr_state, action)][1] += 1
             if curr_state.ply_count <= opening_moves:
                 sym_pair = sym_sa((curr_state, action),
                                   loc_sym=h_symmetry,
                                   cardinal_sym=cardinal_sym_h)
                 if sym_pair[1] in sym_pair[0].actions():
-                    book[sym_pair] += game_value
+                    book[sym_pair][0] += game_value
+                    book[sym_pair][1] += 1
                 sym_pair = sym_sa((curr_state, action),
                                   loc_sym=v_symmetry,
                                   cardinal_sym=cardinal_sym_v)
                 if sym_pair[1] in sym_pair[0].actions():
-                    book[sym_pair] += game_value
+                    book[sym_pair][0] += game_value
+                    book[sym_pair][1] += 1
                 sym_pair = sym_sa((curr_state, action),
                                   loc_sym=c_symmetry,
                                   cardinal_sym=cardinal_sym_c)
                 if sym_pair[1] in sym_pair[0].actions():
-                    book[sym_pair] += game_value
+                    book[sym_pair][0] += game_value
+                    book[sym_pair][1] += 1
         curr_state = curr_state.result(action)
         active_player = 1 - active_player
         game_value = 2 * (active_player == winner_id) - 1
