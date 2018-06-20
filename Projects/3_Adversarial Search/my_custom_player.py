@@ -59,6 +59,9 @@ class CustomPlayer(DataPlayer):
         otherwise return the minimum value over all legal child
         nodes.
         """
+        if state.terminal_test():
+            return state.utility(self.player_id)
+        
         v = float('inf')
         for a in state.actions():
             v = min(v, self.max_value(state.result(a), alpha, beta, depth - 1))
