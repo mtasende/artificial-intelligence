@@ -2,6 +2,65 @@ from sample_players import DataPlayer
 import random
 import math
 from functools import partial
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class Node:
+    def __init__(self, state, parent=None, action=None):
+        self.state = state  # Memory inefficient, but let's do it by now...
+        if parent is not None:
+            self.parents = {(parent, action)}
+        else:
+            self.parents = set()
+        self.children = dict()
+        self.Q = 0
+        self.N = 0
+
+    def __hash__(self):
+        return hash(self.state)
+
+    def __eq__(self, other):
+        return (self.__class__ == other.__class__ and
+                self.state == other.state)
+
+    def is_fully_expanded(self):
+        return len(self.unexplored_actions()) == 0
+
+    def unexplored_actions(self):
+        return list(set(self.state.actions()) - set(self.children.keys()))
+
+    def add_child(self, child_node, action):
+        self.children[action] = child_node
+
+    def __str__(self):
+        return '\n'.join(['{:25}: {}\n'.format(key, value) + '_' * 100 + '\n'
+                          for key, value in self.__dict__.items()])
+
+
+class Tree:
+    def __init__(self, root):
+        self.root = root
+        self.nodes = {root}
+
+    def add_retrieve(self, node):
+        """If the node exists, it retrieves it. Else, it adds it to the tree."""
+        self.nodes |= {node}
+        return next(item for item in self.nodes if item == node)
+
+    def expand(self, node):
+        # Adds the new nodes to the tree, or modifies it adding a new parent,
+        # if the node already existed from another parent
+        a = random.choice(node.unexplored_actions())
+        new_node = Node(node.state.result(a), node, a)
+        new_node = self.add_retrieve(new_node)
+        new_node.parents.add((node, a))
+        node.add_child(new_node, a)
+        return new_node
+
+    def __str__(self):
+        return ('\n' + '.' * 100 + '\n').join(str(node) for node in self.nodes)
 
 
 class CustomPlayer(DataPlayer):
@@ -122,11 +181,8 @@ class CustomPlayer(DataPlayer):
         if state not in nodes.keys():
             node = CustomPlayer.new_node(state)
             nodes[state] = [node]
-            print('THE NODE WAS NOT IN THE NODES')
-            return node, dict()
+            return node, nodes
         else:
-            print('FOUND THE ROOT NODE')
-            print('Possible nodes: {}'.format(len(nodes[state])))
             return CustomPlayer.best_node(nodes[state]), nodes
 
     def uct_search(self, root_n, nodes=None):
@@ -134,13 +190,9 @@ class CustomPlayer(DataPlayer):
         nodes contains a dictionary of state:node with the nodes that have
         already been visited.
         """
-        print('tree')
         edge_node = CustomPlayer.tree_policy(root_n, nodes)
-        print('default')
         reward = self.default_policy(edge_node['state'])
-        print('backup')
         CustomPlayer.backup_negamax(edge_node, reward)
-        print('best')
         return CustomPlayer.best_child(root_n, 0)['from_action'], nodes  # Greedy, so c = 0
 
     def default_policy(self, state):
@@ -170,19 +222,17 @@ class CustomPlayer(DataPlayer):
         """
         self.queue.put(random.choice(state.actions()))
 
-        if self.context is None:
-            self.context = dict()
-        nodes = self.context
-        #nodes = dict()
+        #if self.context is None:
+        #    self.context = dict()
+        #nodes = self.context
+        nodes = dict()
         root_n, nodes = CustomPlayer.get_root_node(state, nodes)
         root_n['parent'] = None  # Set this one as the new root
         root_n['from_action'] = None  # Just for completeness, not used by now
-        print('NEW CALL. nodes: {}'.format(len(nodes)))
 
         while True:
-            print('searching...')
             action, nodes = self.uct_search(root_n, nodes)
-            print('action {}, nodes {}\n'.format(action, len(nodes)))
+            # print('\naction {}, nodes {}'.format(action, len(nodes)))
             # print([str(state) for state in nodes.keys()])
             self.queue.put(action)
-            self.context = nodes
+            #self.context = nodes
