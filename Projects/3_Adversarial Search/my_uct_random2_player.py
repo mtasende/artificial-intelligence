@@ -7,62 +7,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Node:
-    def __init__(self, state, parent=None, action=None):
-        self.state = state  # Memory inefficient, but let's do it by now...
-        if parent is not None:
-            self.parents = {(parent, action)}
-        else:
-            self.parents = set()
-        self.children = dict()
-        self.Q = 0
-        self.N = 0
-
-    def __hash__(self):
-        return hash(self.state)
-
-    def __eq__(self, other):
-        return (self.__class__ == other.__class__ and
-                self.state == other.state)
-
-    def is_fully_expanded(self):
-        return len(self.unexplored_actions()) == 0
-
-    def unexplored_actions(self):
-        return list(set(self.state.actions()) - set(self.children.keys()))
-
-    def add_child(self, child_node, action):
-        self.children[action] = child_node
-
-    def __str__(self):
-        return '\n'.join(['{:25}: {}\n'.format(key, value) + '_' * 100 + '\n'
-                          for key, value in self.__dict__.items()])
-
-
-class Tree:
-    def __init__(self, root):
-        self.root = root
-        self.nodes = {root}
-
-    def add_retrieve(self, node):
-        """If the node exists, it retrieves it. Else, it adds it to the tree."""
-        self.nodes |= {node}
-        return next(item for item in self.nodes if item == node)
-
-    def expand(self, node):
-        # Adds the new nodes to the tree, or modifies it adding a new parent,
-        # if the node already existed from another parent
-        a = random.choice(node.unexplored_actions())
-        new_node = Node(node.state.result(a), node, a)
-        new_node = self.add_retrieve(new_node)
-        new_node.parents.add((node, a))
-        node.add_child(new_node, a)
-        return new_node
-
-    def __str__(self):
-        return ('\n' + '.' * 100 + '\n').join(str(node) for node in self.nodes)
-
-
 class CustomPlayer(DataPlayer):
     """ Implement your own agent to play knight's Isolation
 
