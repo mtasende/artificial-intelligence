@@ -1,10 +1,6 @@
+
 from sample_players import DataPlayer
 import random
-import math
-from functools import partial
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class CustomPlayer(DataPlayer):
@@ -27,129 +23,71 @@ class CustomPlayer(DataPlayer):
       suitable for using any other machine learning techniques.
     **********************************************************************
     """
+
     def my_moves(self, state):
         return len(state.liberties(state.locs[self.player_id]))
 
     def opponent_moves(self, state):
         return len(state.liberties(state.locs[1 - self.player_id]))
 
-    @staticmethod
-    def heuristic(state, player_id):
-        return len(state.liberties(state.locs[player_id])) - len(state.liberties(state.locs[1 - player_id]))
+    def alpha_beta_search(self, state, depth):
+        """ Return the move along a branch of the game tree that
+        has the best possible value.  A move is a pair of coordinates
+        in (column, row) order corresponding to a legal move for
+        the searching player.
 
-    @staticmethod
-    def new_node(state, parent=None, from_action=None, N=0, Q=0, children=None):
-        node = {'state': state,
-                'parent': parent,
-                'from_action': from_action,
-                'N': N,
-                'Q': Q
-                }
-        if children is None:
-            node['children'] = list()
-        else:
-            node['children'] = children
-        if parent is not None:
-            parent['children'].append(node)
-        return node
-
-    @staticmethod
-    def ucb(node, c=1):
-        if node['N'] == 0:
-            if c != 0:
-                return float('inf')
-            else:
-                return 0
-        return (node['Q'] / node['N']) + c * math.sqrt((2 * math.log(node['N'])) / node['N'])
-
-    @staticmethod
-    def best_node(node_list, c=1):
-        return max(node_list, key=partial(CustomPlayer.ucb, c=c))
-
-    @staticmethod
-    def best_child(node, c=1):
-        return CustomPlayer.best_node(node['children'], c)
-
-    @staticmethod
-    def expand(node):
-        a = random.choice(CustomPlayer.unexplored_actions(node))
-        child = CustomPlayer.new_node(state=node['state'].result(a),
-                                      parent=node,
-                                      from_action=a)
-        node['children'].append(child)
-        return child
-
-    @staticmethod
-    def unexplored_actions(node):
-        return list(set(node['state'].actions()) -
-                    set(child['from_action'] for child in node['children']))
-
-    @staticmethod
-    def is_fully_expanded(node):
-        return len(CustomPlayer.unexplored_actions(node)) == 0
-
-    @staticmethod
-    def tree_policy(node, nodes=None):
-        if nodes is None:
-            nodes = dict()
-        temp_node = node
-        while not temp_node['state'].terminal_test():
-            if CustomPlayer.is_fully_expanded(temp_node):
-                temp_node = CustomPlayer.best_child(temp_node)
-            else:
-                child = CustomPlayer.expand(temp_node)
-                if child['state'] not in nodes.keys():
-                    nodes[child['state']] = [child]
-                else:
-                    nodes[child['state']].append(child)
-                return child
-        return temp_node
-
-    @staticmethod
-    def backup_negamax(node, reward):
-        temp_node = node
-        temp_node['N'] += 1
-        temp_node['Q'] += reward
-        while temp_node['parent'] is not None:
-            temp_node = temp_node['parent']
-            temp_node['N'] += 1
-            temp_node['Q'] += reward
-
-    @staticmethod
-    def get_root_node(state, nodes=None):
+        Assumprtions:  depth > 0,  the state is not terminal.
         """
-        nodes = {
-            state1: [node1_1, node1_2],
-            state2: [node2_1],
-            state3: [node3_1, node3_2, node3_3]
-        }
-        """
-        if nodes is None:
-            nodes = dict()
-        if state not in nodes.keys():
-            node = CustomPlayer.new_node(state)
-            nodes[state] = [node]
-            return node, nodes
-        else:
-            return CustomPlayer.best_node(nodes[state]), nodes
+        alpha = -float('inf')
+        beta = float('inf')
+        best_score = -float('inf')
+        first_move = True
+        best_move = None
+        for a in state.actions():
+            v = self.min_value(state.result(a), alpha, beta, depth - 1)
+            if first_move:
+                first_move = False
+                best_move = a
+            if v > best_score:
+                best_score = v
+                best_move = a
+            alpha = max(v, alpha)
+        return best_move
 
-    def uct_search(self, root_n, nodes=None):
+    def min_value(self, state, alpha, beta, depth):
+        """ Return the value for a win (+1) if the game is over,
+        otherwise return the minimum value over all legal child
+        nodes.
         """
-        nodes contains a dictionary of state:node with the nodes that have
-        already been visited.
-        """
-        edge_node = CustomPlayer.tree_policy(root_n, nodes)
-        reward = self.default_policy(edge_node['state'])
-        CustomPlayer.backup_negamax(edge_node, reward)
-        return CustomPlayer.best_child(root_n, 0)['from_action'], nodes  # Greedy, so c = 0
+        if state.terminal_test():
+            return state.utility(self.player_id)
 
-    def default_policy(self, state):
-        temp_state = state
-        while not temp_state.terminal_test():
-            a = random.choice(temp_state.actions())
-            # a = max(temp_state.actions(), key=lambda x: self.heuristic(temp_state.result(x), temp_state.player()))
-            temp_state = temp_state.result(a)
-        return temp_state.utility(self.player_id)
+        v = float('inf')
+        for a in state.actions():
+            v = min(v, self.max_value(state.result(a), alpha, beta, depth - 1))
+            if v <= alpha:
+                return v
+            beta = min(v, beta)
+        return v
+
+    def max_value(self, state, alpha, beta, depth):
+        """ Return the value for a loss (-1) if the game is over,
+        otherwise return the maximum value over all legal child
+        nodes.
+        """
+        if state.terminal_test():
+            return state.utility(self.player_id)
+
+        if depth <= 0:
+            return self.my_moves(state) - self.opponent_moves(state)
+
+        v = -float('inf')
+        for a in state.actions():
+            v = max(v, self.min_value(state.result(a), alpha, beta, depth - 1))
+            if v >= beta:
+                return v
+            alpha = max(v, alpha)
+        return v
 
     def get_action(self, state):
         """ Employ an adversarial search technique to choose an action
@@ -170,8 +108,8 @@ class CustomPlayer(DataPlayer):
         """
         self.queue.put(random.choice(state.actions()))
 
-        root_n, nodes = CustomPlayer.get_root_node(state, None)
-
+        # Iterative deepening
+        depth = 1
         while True:
-            action, nodes = self.uct_search(root_n, nodes)
-            self.queue.put(action)
+            self.queue.put(self.alpha_beta_search(state, depth))
+            depth += 1
