@@ -170,15 +170,8 @@ class CustomPlayer(DataPlayer):
         """
         self.queue.put(random.choice(state.actions()))
 
-        #if self.context is None:
-        #    self.context = dict()
-        #nodes = self.context
-        nodes = dict()
-        root_n, nodes = CustomPlayer.get_root_node(state, nodes)
-        root_n['parent'] = None  # Set this one as the new root
-        root_n['from_action'] = None  # Just for completeness, not used by now
+        root_n, nodes = CustomPlayer.get_root_node(state, None)
 
         while True:
             action, nodes = self.uct_search(root_n, nodes)
             self.queue.put(action)
-            #self.context = nodes

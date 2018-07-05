@@ -2,6 +2,9 @@ from sample_players import DataPlayer
 import random
 import math
 from functools import partial
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CustomPlayer(DataPlayer):
@@ -29,6 +32,10 @@ class CustomPlayer(DataPlayer):
 
     def opponent_moves(self, state):
         return len(state.liberties(state.locs[1 - self.player_id]))
+
+    @staticmethod
+    def heuristic(state, player_id):
+        return len(state.liberties(state.locs[player_id])) - len(state.liberties(state.locs[1 - player_id]))
 
     @staticmethod
     def new_node(state, parent=None, from_action=None, N=0, Q=0, children=None):
@@ -122,11 +129,8 @@ class CustomPlayer(DataPlayer):
         if state not in nodes.keys():
             node = CustomPlayer.new_node(state)
             nodes[state] = [node]
-            #print('THE NODE WAS NOT IN THE NODES')
-            return node, dict()
+            return node, nodes
         else:
-            #print('FOUND THE ROOT NODE')
-            #print('Possible nodes: {}'.format(len(nodes[state])))
             return CustomPlayer.best_node(nodes[state]), nodes
 
     def uct_search(self, root_n, nodes=None):
@@ -134,21 +138,17 @@ class CustomPlayer(DataPlayer):
         nodes contains a dictionary of state:node with the nodes that have
         already been visited.
         """
-        #print('tree')
         edge_node = CustomPlayer.tree_policy(root_n, nodes)
-        #print('default')
         reward = self.default_policy(edge_node['state'])
-        #print('backup')
         CustomPlayer.backup_negamax(edge_node, reward)
-        #print('best')
         return CustomPlayer.best_child(root_n, 0)['from_action'], nodes  # Greedy, so c = 0
 
     def default_policy(self, state):
         temp_state = state
         while not temp_state.terminal_test():
             a = random.choice(temp_state.actions())
+            # a = max(temp_state.actions(), key=lambda x: self.heuristic(temp_state.result(x), temp_state.player()))
             temp_state = temp_state.result(a)
-
         return temp_state.utility(self.player_id)
 
     def get_action(self, state):
@@ -170,19 +170,8 @@ class CustomPlayer(DataPlayer):
         """
         self.queue.put(random.choice(state.actions()))
 
-        if self.context is None:
-            self.context = dict()
-        nodes = self.context
-        #nodes = dict()
-        root_n, nodes = CustomPlayer.get_root_node(state, nodes)
-        root_n['parent'] = None  # Set this one as the new root
-        root_n['from_action'] = None  # Just for completeness, not used by now
-        #print('NEW CALL. nodes: {}'.format(len(nodes)))
+        root_n, nodes = CustomPlayer.get_root_node(state, None)
 
         while True:
-            #print('searching...')
             action, nodes = self.uct_search(root_n, nodes)
-            #print('action {}, nodes {}\n'.format(action, len(nodes)))
-            # print([str(state) for state in nodes.keys()])
             self.queue.put(action)
-            # self.context = nodes
