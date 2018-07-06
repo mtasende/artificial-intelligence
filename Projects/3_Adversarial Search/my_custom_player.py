@@ -61,7 +61,7 @@ class CustomPlayer(DataPlayer):
         """
         if state.terminal_test():
             return state.utility(self.player_id)
-        
+
         v = float('inf')
         for a in state.actions():
             v = min(v, self.max_value(state.result(a), alpha, beta, depth - 1))
@@ -95,21 +95,18 @@ class CustomPlayer(DataPlayer):
 
         This method must call self.queue.put(ACTION) at least once, and may
         call it as many times as you want; the caller is responsible for
-        cutting off the function after the search time limit has expired. 
+        cutting off the function after the search time limit has expired.
 
         See RandomPlayer and GreedyPlayer in sample_players for more examples.
 
         **********************************************************************
-        NOTE: 
+        NOTE:
         - The caller is responsible for cutting off search, so calling
           get_action() from your own code will create an infinite loop!
           Refer to (and use!) the Isolation.play() function to run games.
         **********************************************************************
         """
         self.queue.put(random.choice(state.actions()))
-
-        # if self.context is None:
-        #    self.context = dict()
 
         # Iterative deepening
         depth = 1

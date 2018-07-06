@@ -4,7 +4,6 @@
 ###############################################################################
 import inspect
 import logging
-import sys
 import time
 
 from collections import namedtuple
