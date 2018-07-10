@@ -108,10 +108,21 @@ class CustomPlayer(DataPlayer):
         """
         self.queue.put(random.choice(state.actions()))
 
-        # if self.context is None:
-        #    self.context = dict()
-
-        # Iterative deepening
+        book_depth = 4
+        random_book = False
+        # Play by the book...
+        if state.ply_count < book_depth:
+            if random_book:
+                return  # One random action is always in the queue
+            if state in self.data.keys():
+                book_action_value = max(self.data[state], key=lambda x: x[1])
+                self.queue.put(book_action_value[0])
+                return
+                #if book_action_value[1] > 0:
+                    # print('Using book for action-value: {}'.format(book_action_value))
+                #    self.queue.put(book_action_value[0])
+                #    return
+        # ...or iterative deepening
         depth = 1
         while True:
             self.queue.put(self.alpha_beta_search(state, depth))
