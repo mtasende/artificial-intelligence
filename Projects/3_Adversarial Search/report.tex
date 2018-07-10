@@ -70,7 +70,8 @@ The algorithm was run for several hours in different days (a mechanism to store 
 Finally, the initial book and the tree book were joined together in one large book (of depth 4).
 
 \section{Results}
-The player using the book in the first 4 moves ("book4") was compared against a player using random moves in the first 4 moves ("random4"). Both play like alpha-beta with iterative deepening after those moves.The results are below:\\
+The player using the book in the first 4 moves ("book4") was compared against a player using random moves in the first 4 moves ("random4"). Both play like alpha-beta with iterative deepening after those moves.The results for 100 matches, without the "fair" flag, are below:\\
+\verb+(aind)$ python run_match.py -r 50 -o <OPPONENT> -p 4+.\\
 
 \begin{tabular}{|l|c|c|}
  \hline
@@ -84,7 +85,7 @@ MINIMAX & 81\% & 92\%\\
 \hline
 \end{tabular}
 
-The results seem to show an improvement. It is interesting to note that the book was created using a player similar to minimax, with a heuristic that is the same of the greedy player. That may explain that the player doesn't really improve much when playing against the RANDOM player (the book doesn't prepare the player for that...).
+The results seem to show an improvement. It is interesting to note that the book was created using a player similar to minimax, with a heuristic that is the same of the greedy player. That may explain that the player doesn't really improve much when playing against the RANDOM player (the book doesn't prepare the player for that... it may be not so expensive to add custom vs random games to the simulations to fill the book, but it wasn't done this time).
 
 \subsection{Describe your process for collecting statistics to build your opening book. How did you choose states to sample? And how did you perform rollouts to determine a winner?}
 The process was described in previous sections. First, a deterministic sampling up to depth 2, augmenting data with symmetries. The rollouts in that case were made using alpha-beta with iterative deepening (for both players).Then, running MCTS (with UCT) and recording the games to fill the book. The rollouts in that case were done the same way as before, but with the initial book added for the first 2 moves (the players are still alpha-beta with iterative deepening, but in the first two moves they use the book created from the deterministic sampling).
@@ -92,14 +93,46 @@ The process was described in previous sections. First, a deterministic sampling 
 \subsection{What opening moves does your book suggest are most effective on an empty board for player 1 and what is player 2's best reply? }
 A heatmap of the moves expected values can be seen below (the map represents the board image through a central symmetry):
 
-The moves that maximize the expected value are: 70 and 44. It can be seen that those are the ones immediately above and below the center of the board (DebugState was used to show that):
+\pagebreak
+\begin{figure}[!h]
+\centering
+\includegraphics[width=5.0in]{first_move.png}
+\caption{Heatmap with the expected values for the first move. The board is transformed by a central symmetry.}
+\end{figure}
+
+The moves that maximize the expected value are: 70 and 44. It can be seen that those are the ones immediately above and below the center of the board (DebugState was used to show that they correspond to the ones seen in the heatmap):
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=3.0in]{best_first.png}
+\caption{Result of printing the positions of the best moves in a DebugState board (just to check that they seem to be OK).}
+\end{figure}
 
 The best replies for player 2 if, for example, 70 is played (the other case is symmetrical), would be: 7, 79, 87, 3.\\
 A heatmap for the best replies to first move = 70, can be seen below (the map represents the board image through a central symmetry).
 
+\pagebreak
+\begin{figure}[!h]
+\centering
+\includegraphics[width=5.0in]{second_move.png}
+\caption{Heatmap with the expected values for the second move, if the first move is 70. The board is transformed by a central symmetry.}
+\end{figure}
+
 DebugState was used to check that the best replies correspond to what is seen in the heatmap (remember the heatmap shows the central symmetry of the board):
 
+\pagebreak
+\begin{figure}[!h]
+\centering
+\includegraphics[width=3.0in]{best_second_a.png}
+\caption{Result of printing the positions of two of the best second moves in a DebugState board (just to check that they seem to be OK).}
+\end{figure}
 
+\begin{figure}[!h]
+\centering
+\includegraphics[width=3.0in]{best_second_b.png}
+\caption{Result of printing the positions of the other two best second moves in a DebugState board (just to check that they seem to be OK).}
+\end{figure}
 
+After taking into account the central symmetry, everything seems to be OK.
 
 \end{document}
