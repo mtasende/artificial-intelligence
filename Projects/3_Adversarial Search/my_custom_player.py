@@ -108,8 +108,8 @@ class CustomPlayer(DataPlayer):
         """
         self.queue.put(random.choice(state.actions()))
 
-        book_depth = 2
-        random_book = False
+        book_depth = 4
+        random_book = True
         # Play by the book...
         if state.ply_count < book_depth:
             if random_book:
